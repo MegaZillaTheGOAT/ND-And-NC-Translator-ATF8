@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>NC / ND Currency Translator</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f4f4f4;
+        padding: 40px;
+    }
+    .converter {
+        background: white;
+        padding: 20px;
+        max-width: 400px;
+        margin: auto;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+        text-align: center;
+    }
+    input, select, button {
+        width: 100%;
+        padding: 10px;
+        margin-top: 10px;
+        font-size: 16px;
+    }
+    .result {
+        margin-top: 15px;
+        font-weight: bold;
+        text-align: center;
+    }
+</style>
+</head>
+<body>
+
+<div class="converter">
+    <h2>Currency Translator</h2>
+
+    <input type="number" id="amount" placeholder="Enter amount" step="any">
+
+    <select id="from">
+        <option value="USD">USD</option>
+        <option value="NC">NC</option>
+        <option value="ND">ND</option>
+    </select>
+
+    <select id="to">
+        <option value="USD">USD</option>
+        <option value="NC">NC</option>
+        <option value="ND">ND</option>
+    </select>
+
+    <button onclick="convert()">Convert</button>
+
+    <div class="result" id="result"></div>
+</div>
+
+<script>
+function convert() {
+    const amount = parseFloat(document.getElementById("amount").value);
+    const from = document.getElementById("from").value;
+    const to = document.getElementById("to").value;
+
+    if (isNaN(amount)) {
+        document.getElementById("result").innerText = "Enter a valid number.";
+        return;
+    }
+
+    // Conversion rates to USD
+    const ratesToUSD = {
+        USD: 1,
+        NC: 0.33,
+        ND: 33
+    };
+
+    // Convert to USD first, then to target currency
+    const amountInUSD = amount * ratesToUSD[from];
+    const converted = amountInUSD / ratesToUSD[to];
+
+    document.getElementById("result").innerText =
+        `${amount} ${from} = ${converted.toFixed(2)} ${to}`;
+}
+</script>
+
+</body>
+</html>
