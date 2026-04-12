@@ -25,11 +25,18 @@
         padding: 10px;
         margin-top: 10px;
         font-size: 16px;
+        box-sizing: border-box;
     }
     .result {
         margin-top: 15px;
         font-weight: bold;
         text-align: center;
+    }
+    .hint {
+        font-size: 12px;
+        color: #666;
+        text-align: center;
+        margin-top: 5px;
     }
 </style>
 </head>
@@ -38,7 +45,8 @@
 <div class="converter">
     <h2>Currency Translator</h2>
 
-    <input type="number" id="amount" placeholder="Enter amount" step="any">
+    <input type="text" id="amount" placeholder="Enter amount or expression (e.g., 45+13)" autocomplete="off">
+    <div class="hint">Supports +, -, *, /, parentheses, and decimals</div>
 
     <select id="from">
         <option value="USD">USD</option>
@@ -58,13 +66,41 @@
 </div>
 
 <script>
+function evaluateExpression(expr) {
+    // Sanitize: allow only digits, operators, parentheses, decimal points, and spaces
+    const sanitized = expr.replace(/\s+/g, '');
+    if (!/^[\d+\-*/().]+$/.test(sanitized)) {
+        throw new Error("Invalid characters in expression");
+    }
+    // Use Function constructor with strict validation for safe evaluation
+    try {
+        // eslint-disable-next-line no-new-func
+        const result = Function('"use strict"; return (' + sanitized + ')')();
+        if (typeof result !== "number" || !isFinite(result)) {
+            throw new Error("Invalid result");
+        }
+        return result;
+    } catch (e) {
+        throw new Error("Failed to evaluate expression");
+    }
+}
+
 function convert() {
-    const amount = parseFloat(document.getElementById("amount").value);
+    const input = document.getElementById("amount").value.trim();
     const from = document.getElementById("from").value;
     const to = document.getElementById("to").value;
+    const resultEl = document.getElementById("result");
 
-    if (isNaN(amount)) {
-        document.getElementById("result").innerText = "Enter a valid number.";
+    if (!input) {
+        resultEl.innerText = "Enter a value or expression.";
+        return;
+    }
+
+    let amount;
+    try {
+        amount = evaluateExpression(input);
+    } catch (e) {
+        resultEl.innerText = "Invalid expression. Use only numbers, +, -, *, /, ( ), and .";
         return;
     }
 
@@ -79,9 +115,13 @@ function convert() {
     const amountInUSD = amount * ratesToUSD[from];
     const converted = amountInUSD / ratesToUSD[to];
 
-    document.getElementById("result").innerText =
-        `${amount} ${from} = ${converted.toFixed(2)} ${to}`;
+    resultEl.innerText = `${input} ${from} = ${converted.toFixed(2)} ${to}`;
 }
+
+// Allow Enter key to trigger conversion
+document.getElementById("amount").addEventListener("keypress", function(e) {
+    if (e.key === "Enter") convert();
+});
 </script>
 
 </body>
