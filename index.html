@@ -2,79 +2,258 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NC / ND Currency Translator</title>
 <style>
+    :root {
+        --bg-color: #0f0f13;
+        --card-bg: #1a1a20;
+        --text-main: #e0e0e0;
+        --text-muted: #a0a0a0;
+        --accent: #7289da;
+        --accent-hover: #5b6eae;
+        --border: #2f2f36;
+        --input-bg: #0d0d10;
+        --success: #43b581;
+    }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    ::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: var(--card-bg);
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: var(--border);
+        border-radius: 5px;
+        border: 2px solid var(--card-bg);
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #454550;
+    }
+
     body {
-        font-family: Arial, sans-serif;
-        background: #f4f4f4;
-        padding: 40px;
-    }
-    .converter {
-        background: white;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-main);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
         padding: 20px;
-        max-width: 400px;
-        margin: auto;
-        border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
+
+    .converter-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        width: 100%;
+        max-width: 450px;
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+    }
+
+    .converter-card:hover {
+        border-color: var(--accent);
+        transform: translateY(-2px);
+        transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
     h2 {
         text-align: center;
+        margin-bottom: 1.5rem;
+        font-size: 1.8rem;
+        color: var(--accent);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        border-left: 4px solid var(--accent);
+        padding-left: 1rem;
     }
-    input, select, button {
+
+    .input-group {
+        margin-bottom: 1.25rem;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--text-main);
+    }
+
+    input[type="text"], select {
         width: 100%;
-        padding: 10px;
-        margin-top: 10px;
-        font-size: 16px;
-        box-sizing: border-box;
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        background-color: var(--input-bg);
+        color: var(--text-main);
+        outline: none;
+        transition: border-color 0.2s, box-shadow 0.2s;
     }
-    .result {
-        margin-top: 15px;
-        font-weight: bold;
-        text-align: center;
+
+    input[type="text"]:focus, select:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(114, 137, 218, 0.1);
     }
+
+    input[type="text"]::placeholder {
+        color: var(--text-muted);
+    }
+
     .hint {
-        font-size: 12px;
-        color: #666;
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        margin-top: 0.4rem;
+    }
+
+    .currency-row {
+        display: flex;
+        gap: 1rem;
+        align-items: flex-end;
+    }
+
+    .currency-col {
+        flex: 1;
+    }
+
+    button {
+        width: 100%;
+        padding: 0.875rem;
+        background-color: var(--accent);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.2s, transform 0.1s;
+        margin-top: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    button:hover {
+        background-color: var(--accent-hover);
+    }
+
+    button:active {
+        transform: scale(0.98);
+    }
+
+    .result-container {
+        margin-top: 1.5rem;
+        padding: 1.25rem;
+        background-color: var(--input-bg);
+        border: 1px solid var(--border);
+        border-radius: 6px;
         text-align: center;
-        margin-top: 5px;
+        min-height: 70px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .result-text {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--text-main);
+        font-family: 'Consolas', 'Monaco', monospace;
+    }
+
+    .error-text {
+        color: #f04747;
+        font-size: 0.9rem;
+    }
+
+    .swap-indicator {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding-bottom: 8px;
+        color: var(--text-muted);
+    }
+
+    @media (max-width: 480px) {
+        .converter-card {
+            padding: 1.5rem;
+        }
+        
+        .currency-row {
+            flex-direction: column;
+            gap: 0;
+        }
+        
+        .swap-indicator {
+            padding: 10px 0;
+            transform: rotate(90deg);
+        }
     }
 </style>
 </head>
 <body>
 
-<div class="converter">
+<div class="converter-card">
     <h2>Currency Translator</h2>
 
-    <input type="text" id="amount" placeholder="Enter amount or expression (e.g., 45+13)" autocomplete="off">
-    <div class="hint">Supports +, -, *, /, parentheses, and decimals</div>
+    <div class="input-group">
+        <label for="amount">Amount</label>
+        <input type="text" id="amount" placeholder="Enter amount or expression (e.g., 45+13)" autocomplete="off">
+        <div class="hint">Supports +, -, *, /, parentheses, and decimals</div>
+    </div>
 
-    <select id="from">
-        <option value="USD">USD</option>
-        <option value="NC">NC</option>
-        <option value="ND">ND</option>
-    </select>
+    <div class="currency-row">
+        <div class="currency-col">
+            <label for="from">From</label>
+            <select id="from">
+                <option value="USD">USD</option>
+                <option value="NC">NC</option>
+                <option value="ND">ND</option>
+            </select>
+        </div>
+        
+        <div class="swap-indicator">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M7 10h14l-4-4m0 8H3l4 4"/>
+            </svg>
+        </div>
 
-    <select id="to">
-        <option value="USD">USD</option>
-        <option value="NC">NC</option>
-        <option value="ND">ND</option>
-    </select>
+        <div class="currency-col">
+            <label for="to">To</label>
+            <select id="to">
+                <option value="USD">USD</option>
+                <option value="NC">NC</option>
+                <option value="ND">ND</option>
+            </select>
+        </div>
+    </div>
 
     <button onclick="convert()">Convert</button>
 
-    <div class="result" id="result"></div>
+    <div class="result-container">
+        <div class="result-text" id="result">Enter an amount to convert</div>
+    </div>
 </div>
 
 <script>
 function evaluateExpression(expr) {
-    // Sanitize: allow only digits, operators, parentheses, decimal points, and spaces
     const sanitized = expr.replace(/\s+/g, '');
     if (!/^[\d+\-*/().]+$/.test(sanitized)) {
-        throw new Error("Invalid characters in expression");
+        throw new Error("Invalid characters");
     }
-    // Use Function constructor with strict validation for safe evaluation
     try {
-        // eslint-disable-next-line no-new-func
         const result = Function('"use strict"; return (' + sanitized + ')')();
         if (typeof result !== "number" || !isFinite(result)) {
             throw new Error("Invalid result");
@@ -92,7 +271,7 @@ function convert() {
     const resultEl = document.getElementById("result");
 
     if (!input) {
-        resultEl.innerText = "Enter a value or expression.";
+        resultEl.innerHTML = '<span class="error-text">Please enter a value</span>';
         return;
     }
 
@@ -100,25 +279,26 @@ function convert() {
     try {
         amount = evaluateExpression(input);
     } catch (e) {
-        resultEl.innerText = "Invalid expression. Use only numbers, +, -, *, /, ( ), and .";
+        resultEl.innerHTML = '<span class="error-text">Invalid expression</span>';
         return;
     }
 
-    // Conversion rates to USD
     const ratesToUSD = {
         USD: 1,
         NC: 0.33,
         ND: 33
     };
 
-    // Convert to USD first, then to target currency
     const amountInUSD = amount * ratesToUSD[from];
     const converted = amountInUSD / ratesToUSD[to];
 
-    resultEl.innerText = `${input} ${from} = ${converted.toFixed(2)} ${to}`;
+    // Format both amounts with 2 decimal places
+    const formattedInput = amount.toFixed(2);
+    const formattedOutput = converted.toFixed(2);
+
+    resultEl.innerText = `${formattedInput} ${from} = ${formattedOutput} ${to}`;
 }
 
-// Allow Enter key to trigger conversion
 document.getElementById("amount").addEventListener("keypress", function(e) {
     if (e.key === "Enter") convert();
 });
